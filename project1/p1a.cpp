@@ -16,15 +16,16 @@ using namespace std;
 #include "d_matrix.h"
 #include "knapsack.h"
 
-void exhaustiveKnapsack(knapsack k, int secs) 
+knapsack exhaustiveKnapsack(knapsack k, int secs) 
 {
 	int bestValue = 0;
-	vector<bool> currentBest[k.getNumObjects()];
+	vector<bool> currentBest (k.getNumObjects(), false);
 
 	clock_t startTime = clock();
 
 	// http://www.programmingnotes.org/?p=4472
-	for (unsigned i = 0; i < (unsigned) 1 << (k.getNumObjects()); i++) {
+	for (unsigned long i = 0; i < (unsigned long) 1 << (k.getNumObjects()); i++) {
+		cout << i << endl;
 		for (int bit = 0; bit < k.getNumObjects(); bit++) {
 			if ((i >> bit) & 1) {
 				k.select(bit);
@@ -49,27 +50,21 @@ void exhaustiveKnapsack(knapsack k, int secs)
 			k.unSelect(j);
 		}
 	}
+
+	return k;
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	char x;
 	ifstream fin;
-	stack <int> moves;
-	string fileName;
-	
-	// Read the name of the file from the keyboard or
-	// hard code it here for testing.
-	
-	// fileName = "knapsack16.input";
-
-	cout << "Enter filename" << endl;
-	cin >> fileName;
-	
-	fin.open(fileName.c_str());
+	if (argc != 2) {
+		cout << "Usage:\n\t./p1a input_file" << endl;
+	}
+	fin.open(argv[1]);
 	if (!fin)
 	{
-		cerr << "Cannot open " << fileName << endl;
+		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
 
@@ -78,7 +73,7 @@ int main()
 		cout << "Reading knapsack instance" << endl;
 		knapsack k(fin);
 
-		exhaustiveKnapsack(k, 600);
+		k = exhaustiveKnapsack(k, 600);
 
 		cout << endl << "Best solution" << endl;
 		k.printSolution();
