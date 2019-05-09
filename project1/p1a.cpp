@@ -16,6 +16,13 @@ using namespace std;
 #include "d_matrix.h"
 #include "knapsack.h"
 
+bool shouldFlipBit(vector<bool> bits, int index) {
+	for (int i = index - 1; i >= 0; i--) {
+		if (bits[i] == 0) return false;
+	}
+	return true;
+}
+
 knapsack exhaustiveKnapsack(knapsack k, int secs) 
 {
 	int bestValue = 0;
@@ -24,7 +31,7 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 	clock_t startTime = clock();
 
 	// http://www.programmingnotes.org/?p=4472
-	for (unsigned long i = 0; i < (unsigned long) 1 << (k.getNumObjects()); i++) {
+	while (true) {
 		cout << i << endl;
 		for (int bit = 0; bit < k.getNumObjects(); bit++) {
 			if ((i >> bit) & 1) {
