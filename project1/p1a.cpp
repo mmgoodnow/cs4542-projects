@@ -17,7 +17,7 @@ using namespace std;
 #include "knapsack.h"
 
 bool shouldFlipBit(vector<bool> bits, int index) {
-	for (int i = index - 1; i >= 0; i--) {
+	for (int i = 0; i < index; i++) {
 		if (bits[i] == 0) return false;
 	}
 	return true;
@@ -27,29 +27,47 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 {
 	int bestValue = 0;
 	vector<bool> currentBest (k.getNumObjects(), false);
+	vector<bool> currentConfig (k.getNumObjects(), false);
 
 	clock_t startTime = clock();
 
 	// http://www.programmingnotes.org/?p=4472
 	while (true) {
-		cout << i << endl;
-		for (int bit = 0; bit < k.getNumObjects(); bit++) {
-			if ((i >> bit) & 1) {
-				k.select(bit);
-			} else {
-				k.unSelect(bit);
-			}
-		}
+		
+		// check validity and compare value against current best
 		if (k.getCost() <= k.getCostLimit() && k.getValue() > bestValue) {
 			bestValue = k.getValue();
 			for (int j = 0; j < k.getNumObjects(); j++) {
 				currentBest[j] = k.isSelected(j);
 			}
 		}
-
+		
+		// iterate currentConfig by walking down the bits backwards to
+		// determine if they should be flipped
+		for (int bit = k.getNumObjects() - 1; bit >= 0; bit--) {
+			if (shouldFlipBit(currentConfig, bit)) {
+				currentConfig[bit] = !currentConfig[bit];
+			}
+		}
+		
+		// set k to currentConfig
+		for (int bit = 0; bit < k.getNumObjects(); bit++) {
+			if (currentConfig[bit]) {
+				k.select(bit);
+			} else {
+				k.unSelect(bit);
+			}
+		}
+		
+		// terminate if we're on the last configuration
+		if (shouldFlipBit(currentConfig, k.getNumObjects())) break;
+		
+		// terminate if it's been running too long
 		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
+		
 	}
-
+	
+	// set subset back to current best
 	for (int j = 0; j < k.getNumObjects(); j++) {
 		if (currentBest[j]) {
 			k.select(j);
