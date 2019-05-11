@@ -1,14 +1,13 @@
 // Project 1a: Solving knapsack using exhaustive search
-//
 
+#include <cmath>
+#include <fstream>
 #include <iostream>
 #include <limits.h>
 #include <list>
-#include <fstream>
 #include <queue>
-#include <vector>
 #include <time.h>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -23,17 +22,16 @@ bool shouldFlipBit(vector<bool> bits, int index) {
 	return true;
 }
 
-knapsack exhaustiveKnapsack(knapsack k, int secs) 
-{
+void exhaustiveKnapsack(knapsack &k, int secs) {
 	int bestValue = 0;
-	vector<bool> currentBest (k.getNumObjects(), false);
-	vector<bool> currentConfig (k.getNumObjects(), false);
+	vector<bool> currentBest(k.getNumObjects(), false);
+	vector<bool> currentConfig(k.getNumObjects(), false);
 
 	clock_t startTime = clock();
 
 	// http://www.programmingnotes.org/?p=4472
 	while (true) {
-		
+
 		// check validity and compare value against current best
 		if (k.getCost() <= k.getCostLimit() && k.getValue() > bestValue) {
 			bestValue = k.getValue();
@@ -41,7 +39,7 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 				currentBest[j] = k.isSelected(j);
 			}
 		}
-		
+
 		// iterate currentConfig by walking down the bits backwards to
 		// determine if they should be flipped
 		for (int bit = k.getNumObjects() - 1; bit >= 0; bit--) {
@@ -49,7 +47,7 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 				currentConfig[bit] = !currentConfig[bit];
 			}
 		}
-		
+
 		// set k to currentConfig
 		for (int bit = 0; bit < k.getNumObjects(); bit++) {
 			if (currentConfig[bit]) {
@@ -58,15 +56,14 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 				k.unSelect(bit);
 			}
 		}
-		
+
 		// terminate if we're on the last configuration
 		if (shouldFlipBit(currentConfig, k.getNumObjects())) break;
-		
+
 		// terminate if it's been running too long
 		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
-		
 	}
-	
+
 	// set subset back to current best
 	for (int j = 0; j < k.getNumObjects(); j++) {
 		if (currentBest[j]) {
@@ -75,45 +72,38 @@ knapsack exhaustiveKnapsack(knapsack k, int secs)
 			k.unSelect(j);
 		}
 	}
-
-	return k;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char *argv[]) {
 	char x;
 	ifstream fin;
 	if (argc != 2) {
 		cout << "Usage:\n\t./p1a input_file" << endl;
+		exit(1);
 	}
 	fin.open(argv[1]);
-	if (!fin)
-	{
+	if (!fin) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
 
-	try
-	{
+	try {
 		cout << "Reading knapsack instance" << endl;
 		knapsack k(fin);
 
-		k = exhaustiveKnapsack(k, 600);
+		exhaustiveKnapsack(k, 600);
 
 		cout << endl << "Best solution" << endl;
 		k.printSolution();
-		
-	}    
 
-	catch (indexRangeError &ex) 
-	{ 
-		cout << ex.what() << endl; exit(1);
 	}
-	catch (rangeError &ex)
-	{
-		cout << ex.what() << endl; exit(1);
+
+	catch (indexRangeError &ex) {
+		cout << ex.what() << endl;
+		exit(1);
+	} catch (rangeError &ex) {
+		cout << ex.what() << endl;
+		exit(1);
 	}
+	return 0;
 }
-
-
-
