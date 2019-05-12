@@ -29,7 +29,6 @@ void exhaustiveKnapsack(knapsack &k, int secs) {
 
 	clock_t startTime = clock();
 
-	// http://www.programmingnotes.org/?p=4472
 	while (true) {
 
 		// check validity and compare value against current best
