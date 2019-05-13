@@ -1,4 +1,5 @@
 // Project 1a: Solving knapsack using exhaustive search
+// Michael Goodnow, Zackary Mackay, Jie Fan
 
 #include <cmath>
 #include <fstream>
@@ -15,6 +16,8 @@ using namespace std;
 #include "d_matrix.h"
 #include "knapsack.h"
 
+// looks through selected values, determining whether the bit at index should be
+// flipped
 bool shouldFlipBit(knapsack &k, int index) {
 	for (int i = 0; i < index; i++) {
 		if (!k.isSelected(i)) return false;
@@ -22,6 +25,7 @@ bool shouldFlipBit(knapsack &k, int index) {
 	return true;
 }
 
+// increments the "binary number" k.selected by manually flipping the bits
 void incrementKnapsack(knapsack &k) {
 	for (int bit = k.getNumObjects() - 1; bit >= 0; bit--) {
 		if (shouldFlipBit(k, bit)) {
@@ -34,6 +38,8 @@ void incrementKnapsack(knapsack &k) {
 	}
 }
 
+// Exhaustively examine all the options for the knapsack problem, until it's
+// been running for secs seconds.
 void exhaustiveKnapsack(knapsack &k, int secs) {
 	int bestValue = 0;
 

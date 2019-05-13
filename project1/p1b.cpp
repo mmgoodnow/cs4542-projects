@@ -1,5 +1,5 @@
-// Code to read graph instances from a file.	 Uses the Boost Graph Library
-// (BGL).
+// Project 1b: Solving graph coloring using exhaustive search
+// Michael Goodnow, Zackary Mackay, Jie Fan
 
 #include "d_except.h"
 #include <climits>
@@ -19,16 +19,19 @@ struct EdgeProperties;
 typedef adjacency_list<vecS, vecS, bidirectionalS, VertexProperties,
                        EdgeProperties>
     Graph;
+
+// convenience types
 typedef Graph::vertex_iterator v_itr;
 typedef Graph::edge_iterator e_itr;
 typedef Graph::edge_descriptor e_dsc;
 typedef Graph::vertex_descriptor v_dsc;
 
+// only using color
 struct VertexProperties {
 	int color;
 };
 
-// Create a struct to hold properties for each edge
+// no edge properties
 struct EdgeProperties {};
 
 // Initialize g using data from fin.
@@ -50,6 +53,8 @@ void initializeGraph(Graph &g, ifstream &fin) {
 	}
 }
 
+// Determine whether the color at index should be incremented based on the
+// lesser significance digits
 bool shouldIncrementAtIndex(Graph &g, int numColors, int index) {
 	pair<v_itr, v_itr> r = vertices(g);
 
@@ -62,6 +67,7 @@ bool shouldIncrementAtIndex(Graph &g, int numColors, int index) {
 	return true;
 }
 
+// Increment the coloring configuration for this graph
 void incrementColoring(Graph &g, int numColors) {
 	pair<v_itr, v_itr> r = vertices(g);
 	for (v_itr i = r.second - 1; i >= r.first; --i) {
@@ -72,6 +78,7 @@ void incrementColoring(Graph &g, int numColors) {
 	}
 }
 
+// Determine the number of coloring conflicts in the graph
 int numConflicts(Graph &g) {
 	int conflicts = 0;
 	pair<e_itr, e_itr> r = edges(g);
@@ -87,6 +94,8 @@ int numConflicts(Graph &g) {
 	return conflicts;
 }
 
+// Exhaustively examine all the coloring options for the graph, until it's
+// been running for secs seconds.
 int exhaustiveColoring(Graph &g, int numColors, int secs) {
 	int lowestConflicts = INT_MAX;
 	Graph lowestConflictsGraph;
@@ -116,6 +125,7 @@ int exhaustiveColoring(Graph &g, int numColors, int secs) {
 	return lowestConflicts;
 }
 
+// print the number of conflicts and the coloring configuration
 void printSolution(Graph &g) {
 	cout << "------------------------------------------------" << endl;
 	cout << "Num conflicts: " << numConflicts(g) << endl;

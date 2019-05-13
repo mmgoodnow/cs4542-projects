@@ -1,5 +1,6 @@
 // Knapsack class
-// Version f08.1
+// Michael Goodnow, Zackary Mackay, Jie Fan
+// based on starter code
 
 class knapsack {
   public:
@@ -75,6 +76,7 @@ knapsack::knapsack(const knapsack &k) {
 	}
 }
 
+// default constructor
 knapsack::knapsack() {}
 
 int knapsack::getNumObjects() const { return numObjects; }
