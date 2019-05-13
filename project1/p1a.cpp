@@ -15,17 +15,29 @@ using namespace std;
 #include "d_matrix.h"
 #include "knapsack.h"
 
-bool shouldFlipBit(vector<bool> bits, int index) {
+bool shouldFlipBit(knapsack &k, int index) {
 	for (int i = 0; i < index; i++) {
-		if (bits[i] == 0) return false;
+		if (!k.isSelected(i)) return false;
 	}
 	return true;
 }
 
+void incrementKnapsack(knapsack &k) {
+	for (int bit = k.getNumObjects() - 1; bit >= 0; bit--) {
+		if (shouldFlipBit(k, bit)) {
+			if (k.isSelected(bit)) {
+				k.unSelect(bit);
+			} else {
+				k.select(bit);
+			}
+		}
+	}
+}
+
 void exhaustiveKnapsack(knapsack &k, int secs) {
 	int bestValue = 0;
-	vector<bool> currentBest(k.getNumObjects(), false);
-	vector<bool> currentConfig(k.getNumObjects(), false);
+
+	knapsack currentBest;
 
 	clock_t startTime = clock();
 
@@ -34,43 +46,19 @@ void exhaustiveKnapsack(knapsack &k, int secs) {
 		// check validity and compare value against current best
 		if (k.getCost() <= k.getCostLimit() && k.getValue() > bestValue) {
 			bestValue = k.getValue();
-			for (int j = 0; j < k.getNumObjects(); j++) {
-				currentBest[j] = k.isSelected(j);
-			}
-		}
-
-		// iterate currentConfig by walking down the bits backwards to
-		// determine if they should be flipped
-		for (int bit = k.getNumObjects() - 1; bit >= 0; bit--) {
-			if (shouldFlipBit(currentConfig, bit)) {
-				currentConfig[bit] = !currentConfig[bit];
-			}
-		}
-
-		// set k to currentConfig
-		for (int bit = 0; bit < k.getNumObjects(); bit++) {
-			if (currentConfig[bit]) {
-				k.select(bit);
-			} else {
-				k.unSelect(bit);
-			}
+			currentBest = knapsack(k);
 		}
 
 		// terminate if we're on the last configuration
-		if (shouldFlipBit(currentConfig, k.getNumObjects())) break;
+		if (shouldFlipBit(k, k.getNumObjects())) break;
 
 		// terminate if it's been running too long
 		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
+
+		incrementKnapsack(k);
 	}
 
-	// set subset back to current best
-	for (int j = 0; j < k.getNumObjects(); j++) {
-		if (currentBest[j]) {
-			k.select(j);
-		} else {
-			k.unSelect(j);
-		}
-	}
+	k = knapsack(currentBest);
 }
 
 int main(int argc, char *argv[]) {

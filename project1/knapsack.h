@@ -6,6 +6,7 @@ class knapsack
    public:
       knapsack(ifstream &fin);
       knapsack(const knapsack &);
+      knapsack();
       int getCost(int) const;
       int getValue(int) const;
       int getCost() const;
@@ -27,8 +28,8 @@ class knapsack
       int totalCost;
 };
 
-knapsack::knapsack(ifstream &fin)
 // Construct a new knapsack instance using the data in fin.
+knapsack::knapsack(ifstream &fin)
 {
    int n, b, j, v, c;
    
@@ -54,8 +55,8 @@ knapsack::knapsack(ifstream &fin)
    totalCost = 0;
 }
 
-knapsack::knapsack(const knapsack &k)
 // Knapsack copy constructor.
+knapsack::knapsack(const knapsack &k)
 {
    int n = k.getNumObjects();
    
@@ -78,6 +79,8 @@ knapsack::knapsack(const knapsack &k)
 	 unSelect(i);
    }
 }
+
+knapsack::knapsack() {}
 
 int knapsack::getNumObjects() const
 {
