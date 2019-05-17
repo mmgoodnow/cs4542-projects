@@ -76,8 +76,18 @@ int findBestColor(Graph &g, v_dsc vertex, int numColors) {
 	}
 	
 	// return index of minimum element in colorFreq
-	int *min_p = min_element(colorFreq.begin(), colorFreq.end());
-	return min_p - colorFreq.begin();
+	return min_element(colorFreq.begin(), colorFreq.end()) - colorFreq.begin();
+}
+
+// Greedily color the graph, minimizing color conflicts.
+void greedyColoring(Graph &g, int numColors) {
+	pair<v_itr, v_itr> range = vertices(g);
+
+	// Loop over all nodes in the graph
+	for (v_itr i= range.first; i != range.second; i++) {
+		v_dsc vertex = *i;
+		g[vertex].color = findBestColor(g, vertex, numColors);
+	}
 }
 
 // Determine the number of coloring conflicts in the graph
@@ -94,11 +104,6 @@ int numConflicts(Graph &g) {
 		if (g[tgt].color == g[src].color) conflicts++;
 	}
 	return conflicts;
-}
-
-// Greedily color the graph, minimizing color conflicts.
-int greedyColoring(Graph &g, int numColors) {
-	
 }
 
 // print the number of conflicts and the coloring configuration
