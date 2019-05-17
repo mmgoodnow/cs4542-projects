@@ -17,7 +17,7 @@ using namespace boost;
 struct VertexProperties;
 struct EdgeProperties;
 
-typedef adjacency_list<vecS, vecS, bidirectionalS, VertexProperties,
+typedef adjacency_list<vecS, vecS, undirectedS, VertexProperties,
                        EdgeProperties>
     Graph;
 
@@ -31,6 +31,7 @@ typedef Graph::vertex_descriptor v_dsc;
 // only using color
 struct VertexProperties {
 	int color;
+	bool visited;
 };
 
 // no edge properties
@@ -60,21 +61,17 @@ int findBestColor(Graph &g, v_dsc vertex, int numColors) {
 	pair<a_itr, a_itr> r = adjacent_vertices(vertex, g);
 
 	vector<int> colorFreq(numColors, 0);
-	cout << "Color Freq" << endl;
-	for (size_t i = 0; i < colorFreq.size(); ++i) {
-		cout << colorFreq[i] << endl;
-	}
 
 	// Loop over adjacent nodes in the graph, tallying their colors
 	for (a_itr i = r.first; i != r.second; ++i) {
-		v_dsc vertex = *i;
-		colorFreq[g[vertex].color]++;
+		v_dsc v_adj = *i;
+		if (g[v_adj].visited) {
+			colorFreq[g[v_adj].color]++;
+		}
 	}
-	cout << "Color Freq" << endl;
-	for (size_t i = 0; i < colorFreq.size(); ++i) {
-		cout << colorFreq[i] << endl;
-	}
-	
+
+	g[vertex].visited = true;
+
 	// return index of minimum element in colorFreq
 	return min_element(colorFreq.begin(), colorFreq.end()) - colorFreq.begin();
 }
@@ -84,7 +81,7 @@ void greedyColoring(Graph &g, int numColors) {
 	pair<v_itr, v_itr> range = vertices(g);
 
 	// Loop over all nodes in the graph
-	for (v_itr i= range.first; i != range.second; i++) {
+	for (v_itr i = range.first; i != range.second; i++) {
 		v_dsc vertex = *i;
 		g[vertex].color = findBestColor(g, vertex, numColors);
 	}
