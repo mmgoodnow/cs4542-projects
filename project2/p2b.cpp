@@ -127,7 +127,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	try {
-		cerr << "Reading graph" << endl;
 		Graph g;
 		int numColors;
 		fin >> numColors;
