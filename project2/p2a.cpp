@@ -1,4 +1,4 @@
-// Project 1a: Solving knapsack using a greedy algorithm
+// Project 2a: Solving knapsack using a greedy algorithm
 // Michael Goodnow, Zackary Mackay
 
 #include <cmath>
@@ -16,12 +16,15 @@ using namespace std;
 #include "d_matrix.h"
 #include "knapsack.h"
 
+// Sort comparator that will take a pair of knapsack object id and float which
+// is the ratio of value to weight
 struct compare_knapsack_objects {
 	bool operator()(pair<int, float> &a, pair<int, float> &b) {
 		return a.second > b.second;
 	}
 };
 
+// Solve the knapsack problem using a greedy algorithm.
 void greedyKnapsack(knapsack &k) {
 
 	vector<pair<int, float>> vec;
@@ -45,7 +48,7 @@ int main(int argc, char *argv[]) {
 	char x;
 	ifstream fin;
 	if (argc != 2) {
-		cout << "Usage:\n\t./p2a input_file" << endl;
+		cerr << "Usage:\n\t./p2a input_file" << endl;
 		exit(1);
 	}
 	fin.open(argv[1]);

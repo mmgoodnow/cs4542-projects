@@ -1,4 +1,4 @@
-// Project 1b: Solving graph coloring using a greedy algorithm
+// Project 2b: Solving graph coloring using a greedy algorithm
 // Michael Goodnow, Zackary Mackay
 
 #include "d_except.h"
@@ -117,7 +117,7 @@ void printSolution(Graph &g) {
 int main(int argc, char *argv[]) {
 	ifstream fin;
 	if (argc != 2) {
-		cerr << "Usage:\n\t./p1a input_file" << endl;
+		cerr << "Usage:\n\t./p2b input_file" << endl;
 		exit(1);
 	}
 	fin.open(argv[1]);
