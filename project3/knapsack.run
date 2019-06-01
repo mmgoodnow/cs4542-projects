@@ -17,7 +17,7 @@ option solver cplex;
 option cplex_options 'time=600';
 for {d in data_files} {
 	reset data;
-	data j;
+	data d;
 	solve;
 	display x;
 }
