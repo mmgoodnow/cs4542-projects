@@ -1,5 +1,5 @@
 set data_files = { 
-	"color/color12-3.dat", 
+	# "color/color12-3.dat",
 	"color/color12-4.dat", 
 	"color/color192-6.dat", 
 	"color/color192-7.dat", 
