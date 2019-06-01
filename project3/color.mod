@@ -26,11 +26,14 @@ minimize total_conflicts:
 
 # Each node should have exactly one color
 subject to color_constraint {n in 0..numNodes-1}:
-	sum {c in 0..numColors-1} color[n,c] = 1;
+	sum {c in 0..numColors-1} color[n,c] >= 1;
+
+subject to color_constraint {n in 0..numNodes-1}:
+	sum {c in 0..numColors-1} color[n,c] <= 1;
 
 # Make sure conflicts are detected
 subject to detect_conflicts {i in 0..numNodes-1, j in 0..numNodes-1}: 
 	conflict[i, j] = if (
-		sum {c in 0..numColors-1} (c * color[i, c]) = 
+		sum {c in 0..numColors-1} (c * color[i, c]) =
 		sum {c in 0..numColors-1} (c * color[j, c])
 	) then 1 else 0;
