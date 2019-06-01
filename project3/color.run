@@ -1,0 +1,25 @@
+set data_files = { 
+	"color12-3.dat", 
+	"color12-4.dat", 
+	"color192-6.dat", 
+	"color192-7.dat", 
+	"color192-8.dat", 
+	"color24-4.dat", 
+	"color24-5.dat", 
+	"color48-5.dat", 
+	"color48-6.dat", 
+	"color96-6.dat", 
+	"color96-7.dat"
+};
+model color.mod;
+option solver cplex;
+option cplex_options 'time=600 absmipgap=0';
+for {d in data_files} {
+	reset data;
+	data (d);
+	solve;
+	display numNodes;
+	display numColors;
+	display color;
+	display conflict;
+}
