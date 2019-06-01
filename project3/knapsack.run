@@ -1,0 +1,4 @@
+model knapsack.mod;
+data knapsack/knapsack8.dat;
+solve;
+display x;
