@@ -1,16 +1,15 @@
 set data_files = { 
-	# "color/color12-3.dat",
+	"color/color12-3.dat",
 	"color/color12-4.dat", 
-	"color/color192-6.dat", 
-	"color/color192-7.dat", 
-	"color/color192-8.dat", 
 	"color/color24-4.dat", 
 	"color/color24-5.dat", 
 	"color/color48-5.dat", 
 	"color/color48-6.dat", 
 	"color/color96-6.dat", 
 	"color/color96-7.dat",
-	"color/color12-3.dat"
+	"color/color192-6.dat", 
+	"color/color192-7.dat", 
+	"color/color192-8.dat", 
 };
 model color.mod;
 option solver cplex;
