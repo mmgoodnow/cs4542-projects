@@ -11,7 +11,7 @@ set data_files = {
 	"knapsack/knapsack512.dat", 
 	"knapsack/knapsack64.dat", 
 	"knapsack/knapsack8.dat"
-}
+};
 model knapsack.mod;
 option solver cplex;
 option cplex_options 'time=600';
