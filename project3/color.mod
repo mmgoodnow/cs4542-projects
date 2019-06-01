@@ -29,8 +29,14 @@ subject to color_constraint {n in 0..numNodes-1}:
 	sum {c in 0..numColors-1} color[n,c] = 1;
 
 # Make sure conflicts are detected
-subject to detect_conflicts {i in 0..numNodes-1, j in 0..numNodes-1}: 
-	conflict[i, j] = if (
-		sum {c in 0..numColors-1} (c * color[i, c]) = 
-		sum {c in 0..numColors-1} (c * color[j, c])
-	) then edge[i, j] else 0;
+subject to detect_conflicts {
+	i in 0..numNodes-1, 
+	j in 0..numNodes-1, 
+	c in 0..numColors-1
+}: 
+	# RHS will be 
+	#	0 (no edge or no selected colors), 
+	#	1 (edge exists but colors don't conflict), or 
+	#	2 (conflict), 
+	# so conflict[i, j] must be 1 if there's a conflict
+	conflict[i, j] + 1 >= edge[i, j] * (color[i, c] + color[j, c])
