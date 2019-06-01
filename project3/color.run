@@ -9,7 +9,7 @@ set data_files = {
 	"color/color96-7.dat",
 	"color/color192-6.dat", 
 	"color/color192-7.dat", 
-	"color/color192-8.dat", 
+	"color/color192-8.dat"
 };
 model color.mod;
 option solver cplex;
