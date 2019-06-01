@@ -30,7 +30,7 @@ subject to color_constraint {n in 0..numNodes-1}:
 
 # Make sure conflicts are detected
 subject to detect_conflicts {i in 0..numNodes-1, j in 0..numNodes-1}: 
-	conflict[i, j] = (
+	conflict[i, j] = if (
 		sum {c in 0..numColors-1} (c * color[i, c]) = 
 		sum {c in 0..numColors-1} (c * color[j, c])
-	) and edge[i, j];
+	) then edge[i, j] else 0;
