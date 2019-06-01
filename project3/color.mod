@@ -39,4 +39,4 @@ subject to detect_conflicts {
 	#	1 (edge exists but colors don't conflict), or 
 	#	2 (conflict), 
 	# so conflict[i, j] must be 1 if there's a conflict
-	conflict[i, j] + 1 >= edge[i, j] * (color[i, c] + color[j, c])
+	conflict[i, j] + edge[i, j] >= edge[i, j] * (color[i, c] + color[j, c])
