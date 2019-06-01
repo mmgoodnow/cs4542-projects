@@ -14,7 +14,7 @@ set data_files = {
 };
 model knapsack.mod;
 option solver cplex;
-option cplex_options 'time=600';
+option cplex_options 'time=600 absmipgap=0';
 for {d in data_files} {
 	reset data;
 	data (d);
