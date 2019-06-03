@@ -1,23 +1,23 @@
 set data_files = { 
-	"knapsack/knapsack1024.dat", 
-	"knapsack/knapsack128.dat", 
-	"knapsack/knapsack12.dat", 
-	"knapsack/knapsack16.dat", 
-	"knapsack/knapsack20.dat", 
-	"knapsack/knapsack256.dat", 
-	"knapsack/knapsack28.dat", 
-	"knapsack/knapsack32.dat", 
-	"knapsack/knapsack48.dat", 
-	"knapsack/knapsack512.dat", 
-	"knapsack/knapsack64.dat", 
-	"knapsack/knapsack8.dat"
+	"knapsack/knapsack8",
+	"knapsack/knapsack12", 
+	"knapsack/knapsack16", 
+	"knapsack/knapsack20", 
+	"knapsack/knapsack28", 
+	"knapsack/knapsack32", 
+	"knapsack/knapsack48", 
+	"knapsack/knapsack64", 
+	"knapsack/knapsack128", 
+	"knapsack/knapsack256", 
+	"knapsack/knapsack512", 
+	"knapsack/knapsack1024" 
 };
 model knapsack.mod;
 option solver cplex;
 option cplex_options 'time=600 absmipgap=0';
 for {d in data_files} {
 	reset data;
-	data (d);
+	data (d & ".dat");
 	solve;
-	display x;
+	display x > (d & ".output");
 }

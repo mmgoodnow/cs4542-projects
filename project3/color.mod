@@ -22,7 +22,7 @@ var conflict {i in 0..numNodes-1, j in 0..numNodes-1} binary;
 
 # Objective function
 minimize total_conflicts: 
-	sum {i in 0..numNodes-1, j in 0..numNodes-1} conflict[i, j];
+	sum {i in 0..numNodes-1, j in 0..numNodes-1} conflict[i, j] / 2;
 
 # Each node should have exactly one color
 subject to color_constraint {n in 0..numNodes-1}:

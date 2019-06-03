@@ -1,25 +1,26 @@
 set data_files = { 
-	"color/color12-3.dat",
-	"color/color12-4.dat", 
-	"color/color24-4.dat", 
-	"color/color24-5.dat", 
-	"color/color48-5.dat", 
-	"color/color48-6.dat", 
-	"color/color96-6.dat", 
-	"color/color96-7.dat",
-	"color/color192-6.dat", 
-	"color/color192-7.dat", 
-	"color/color192-8.dat"
+	"color/color12-3",
+	"color/color12-4", 
+	"color/color24-4", 
+	"color/color24-5", 
+	"color/color48-5", 
+	"color/color48-6", 
+	"color/color96-6", 
+	"color/color96-7",
+	"color/color192-6", 
+	"color/color192-7", 
+	"color/color192-8"
 };
 model color.mod;
 option solver cplex;
 option cplex_options 'time=600 absmipgap=0';
 for {d in data_files} {
 	reset data;
-	data (d);
+	data (d & ".dat");
 	solve;
-	display numNodes;
-	display numColors;
-	display color;
-	display conflict;
+	display numNodes > (d & ".output");
+	display numColors > (d & ".output");
+	display edge > (d & ".output");
+	display color > (d & ".output");
+	display conflict > (d & ".output");
 }
