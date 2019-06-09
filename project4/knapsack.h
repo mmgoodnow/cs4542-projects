@@ -16,9 +16,9 @@ class knapsack {
 	int getCostLimit() const;
 	void printSolution();
 	void select(int);
-	void unSelect(int);
+	void deselect(int);
 	bool isSelected(int) const;
-	int bound() const;
+	float bound() const;
 
   private:
 	int numObjects;
@@ -48,7 +48,7 @@ knapsack::knapsack(ifstream &fin) {
 		fin >> j >> v >> c;
 		value[j] = v;
 		cost[j] = c;
-		unSelect(j);
+		deselect(j);
 	}
 
 	totalValue = 0;
@@ -74,7 +74,7 @@ knapsack::knapsack(const knapsack &k) {
 		if (k.isSelected(i))
 			select(i);
 		else
-			unSelect(i);
+			deselect(i);
 	}
 }
 
@@ -86,14 +86,10 @@ int knapsack::getNumObjects() const { return numObjects; }
 int knapsack::getCostLimit() const { return costLimit; }
 
 // Return the value of the ith object.
-int knapsack::getValue(int i) const {
-	return value[i];
-}
+int knapsack::getValue(int i) const { return value[i]; }
 
 // Return the cost of the ith object.
-int knapsack::getCost(int i) const {
-	return cost[i];
-}
+int knapsack::getCost(int i) const { return cost[i]; }
 
 // Return the cost of the selected objects.
 int knapsack::getCost() const { return totalCost; }
@@ -106,8 +102,7 @@ float knapsack::valueCostRatio(int i) const {
 }
 
 // Print all information about the knapsack.
-ostream &
-operator<<(ostream &ostr, const knapsack &k) {
+ostream &operator<<(ostream &ostr, const knapsack &k) {
 	ostr << "------------------------------------------------" << endl;
 	ostr << "Num objects: " << k.getNumObjects()
 	     << " Cost Limit: " << k.getCostLimit() << endl;
@@ -163,8 +158,8 @@ void knapsack::select(int i) {
 	}
 }
 
-// unSelect object i.
-void knapsack::unSelect(int i) {
+// deselect object i.
+void knapsack::deselect(int i) {
 	if (selected[i] == true) {
 		selected[i] = false;
 		totalCost = totalCost - getCost(i);
@@ -173,10 +168,30 @@ void knapsack::unSelect(int i) {
 }
 
 // Return true if object i is currently selected, and false otherwise.
-bool knapsack::isSelected(int i) const {
-	return selected[i];
-}
+bool knapsack::isSelected(int i) const { return selected[i]; }
 
-int knapsack::bound() const {
-	
+float knapsack::bound() const {
+	vector<pair<int, float>> vec;
+	for (int i = 0; i < this->getNumObjects(); i++) {
+		pair<int, float> p(i, this->valueCostRatio(i));
+		vec.push_back(p);
+	}
+	sort(vec.begin(), vec.end(), compare_knapsack_objects());
+
+	int weight_remaining = this->getCostLimit();
+	int value = 0;
+	for (int i = 0; i < vec.size(); i++) {
+		int obj = vec[i].first;
+		if (this->getCost(obj) <= weight_remaining) {
+			weight_remaining -= this->getCost(obj);
+			value += this->getValue(obj);
+			if (weight_remaining == 0) return value;
+		} else if (weight_remaining > 0) {
+			double fraction = (float)weight_remaining / this->getCost(obj);
+			weight_remaining = 0;
+			return fraction * this->getValue(obj) + value;
+		}
+	}
+
+	return (float) value;
 }
