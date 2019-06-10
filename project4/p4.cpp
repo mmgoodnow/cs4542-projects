@@ -1,5 +1,5 @@
-// Project 2a: Solving knapsack using a greedy algorithm
-// Michael Goodnow, Zackary Mackay
+// Project 4: solving knapsack problem using a branch-and-bound solver
+// Michael Goodnow
 
 #include <cmath>
 #include <fstream>
@@ -14,16 +14,10 @@ using namespace std;
 
 #include "knapsack.h"
 
-// Sort comparator that will take a pair of knapsack object id and float which
-// is the ratio of value to weight
-struct compare_knapsack_objects {
-	bool operator()(pair<int, float> &a, pair<int, float> &b) {
-		return a.second > b.second;
-	}
-};
+typedef priority_queue<knapsack, vector<knapsack>, compare_bound> subpq;
 
 // Solve the knapsack problem using a greedy algorithm.
-void greedyKnapsack(knapsack &k) {
+void greedy_knapsack(knapsack &k) {
 
 	vector<pair<int, float>> vec;
 	for (int i = 0; i < k.getNumObjects(); i++) {
@@ -42,6 +36,70 @@ void greedyKnapsack(knapsack &k) {
 	}
 }
 
+void expand_branch(const knapsack &branch, knapsack &best, subpq &subproblems) {
+
+	if (!branch.isLegal()) {
+		cout << "Illegal" << endl;
+		return;
+	}
+	
+	// set new best if branch as-is is better than current best
+	if (branch.getValue() > best.getValue()) {
+		best = branch;
+		best.printSolution();
+	}
+
+	// don't bother expanding if the bound is worse than the current best
+	if (branch.getBound() < best.getValue()) {
+		cout << "Not good enough" << endl;
+		return;
+	}
+	
+	if (branch.getValue() == branch.getBound()) {
+		cout << " Bound is equal to value " << endl;
+		return;
+	}
+	
+	if (branch.getNumDecided() >= branch.getNumObjects()) {
+		cout << " Fully decided " << endl;
+		return;
+	}
+
+	// branch
+	knapsack b0(branch, branch.getNumDecided() + 1);
+	knapsack b1(branch, branch.getNumDecided() + 1);
+
+	// separate the branches
+	b0.deselect(branch.getNumDecided());
+	b1.select(branch.getNumDecided());
+
+	// for each, add to the queue if it's promising
+	if (b0.isLegal() && b0.getBound() > best.getValue()) {
+		subproblems.push(b0);
+	}
+	if (b1.isLegal() && b1.getBound() > best.getValue()) {
+		subproblems.push(b1);
+	}
+}
+
+void branch_bound(knapsack &k, int secs) {
+	subpq subproblems;
+
+	knapsack currentSolution(k);
+	greedy_knapsack(currentSolution);
+
+	subproblems.push(k);
+
+	while (!subproblems.empty()) {
+		knapsack cur = subproblems.top();
+		subproblems.pop();
+		expand_branch(cur, currentSolution, subproblems);
+		// cout << subproblems.size() << endl;
+	}
+
+	k = currentSolution;
+}
+
 int main(int argc, char *argv[]) {
 	char x;
 	ifstream fin;
@@ -58,7 +116,7 @@ int main(int argc, char *argv[]) {
 	knapsack k(fin);
 	cout << "Done reading knapsack instance" << endl;
 
-	greedyKnapsack(k);
+	branch_bound(k, 600);
 
 	cout << endl << "Best solution" << endl;
 	k.printSolution();
