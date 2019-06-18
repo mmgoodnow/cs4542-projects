@@ -1,0 +1,20 @@
+Done reading knapsack instance
+
+Best solution
+------------------------------------------------
+Decided values: 13
+Bound: 4843
+Total value: 4834
+Total cost: 3834
+
+0  805 705
+1  101 1
+2  219 119
+4  287 187
+5  467 367
+7  790 690
+8  122 22
+10  447 347
+11  974 874
+12  622 522
+

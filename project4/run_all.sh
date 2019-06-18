@@ -24,7 +24,7 @@ N=4
 open_sem $N
 for inf in knapsack/*.input; do
 	outf=${inf/input/output}
-	run_with_lock echo "./p2a $inf > $outf"; ./p4 $inf > $outf
+	run_with_lock echo "./p4 $inf > $outf"; ./p4 $inf > $outf
 done
 
 wait

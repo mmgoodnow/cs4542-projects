@@ -39,29 +39,29 @@ void greedy_knapsack(knapsack &k) {
 void expand_branch(const knapsack &branch, knapsack &best, subpq &subproblems) {
 
 	if (!branch.isLegal()) {
-		cout << "Illegal" << endl;
+		// cout << "Illegal" << endl;
 		return;
 	}
 	
 	// set new best if branch as-is is better than current best
 	if (branch.getValue() > best.getValue()) {
 		best = branch;
-		best.printSolution();
+		// cout << "New best: " << best.getValue() << endl;
 	}
 
 	// don't bother expanding if the bound is worse than the current best
 	if (branch.getBound() < best.getValue()) {
-		cout << "Not good enough" << endl;
+		// cout << "Not good enough" << endl;
 		return;
 	}
 	
 	if (branch.getValue() == branch.getBound()) {
-		cout << " Bound is equal to value " << endl;
+		// cout << " Bound is equal to value " << endl;
 		return;
 	}
 	
 	if (branch.getNumDecided() >= branch.getNumObjects()) {
-		cout << " Fully decided " << endl;
+		// cout << " Fully decided " << endl;
 		return;
 	}
 
@@ -89,12 +89,16 @@ void branch_bound(knapsack &k, int secs) {
 	greedy_knapsack(currentSolution);
 
 	subproblems.push(k);
+	
+	clock_t startTime = clock();
 
 	while (!subproblems.empty()) {
 		knapsack cur = subproblems.top();
 		subproblems.pop();
 		expand_branch(cur, currentSolution, subproblems);
 		// cout << subproblems.size() << endl;
+		
+		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
 	}
 
 	k = currentSolution;
