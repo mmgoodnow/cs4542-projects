@@ -35,11 +35,27 @@ void greedy_knapsack(knapsack &k) {
 		}
 	}
 }
+//Solve the knapsack problem using local search
+void steepest_descent(knapsack &k, int secs) {
+	clock_t startTime = clock();
+	while(1){
+		knapsack candidate = k.bestNeighbor();
+		if(k.getValue() < candidate.getValue()){
+			k = candidate;
+			// terminate if it's been running too long
+			if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
+		}
+		else {
+			break;
+		}
 
+	
+		
 
 
 int main(int argc, char *argv[]) {
 	char x;
+	int secs = 0;
 	ifstream fin;
 	if (argc != 2) {
 		cerr << "Usage:\n\t./p4 input_file" << endl;
@@ -53,9 +69,11 @@ int main(int argc, char *argv[]) {
 
 	knapsack k(fin);
 	cout << "Done reading knapsack instance" << endl;
-
-
-
+	cout << "Please input time constraint:"<<endl;
+	cin >>secs>>endl;
+	
+	steepest_descent(k,secs);
+	
 	cout << endl << "Best solution" << endl;
 	k.printSolution();
 
