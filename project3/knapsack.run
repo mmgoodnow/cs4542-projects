@@ -14,10 +14,11 @@ set data_files = {
 };
 model knapsack.mod;
 option solver cplex;
-option cplex_options 'time=600 absmipgap=0';
+option cplex_options 'time=600';
 for {d in data_files} {
 	reset data;
 	data (d & ".dat");
 	solve;
+	display total_value > (d & ".output");
 	display x > (d & ".output");
 }
