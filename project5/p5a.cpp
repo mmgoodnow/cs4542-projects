@@ -48,6 +48,8 @@ void steepest_descent(knapsack &k, int secs) {
 		else {
 			break;
 		}
+	}
+}
 void tabu_search(knapsack &k, int secs) {
 	clock_t startTime = clock();
 	deque <knapsack> tabul;
@@ -58,16 +60,18 @@ void tabu_search(knapsack &k, int secs) {
 		//add to taboo list
 		tabul.push_front(candidate);
 		//remove the oldest item on the list if the list is size greater than 10
-		if(tabul.size() > 10){tabul.pop_back()}
+		if(tabul.size() > 10){tabul.pop_back();}
 		//assign new best neighbor
 			k = candidate;
-		if(k.getValue() > champion.getValue()){
+		if(k.getValue() > champion.getValue();){
 		//assign new champion
 			champion = k;
 		}
 			// terminate if it's been running too long
 			if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
 		}
+		k=champion;
+}
 	
 		
 
