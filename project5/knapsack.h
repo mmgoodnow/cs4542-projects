@@ -22,7 +22,8 @@ class knapsack {
 	void deselect(int);
 	bool isSelected(int) const;
 	float getBound() const;
-	knapsack neighbor(int, int);
+	knapsack neighbor(int, int) const;
+	knapsack bestNeighbor() const;
 
   private:
 	int numDecided;
@@ -265,7 +266,7 @@ float knapsack::calcBound() const {
 float knapsack::getBound() const { return bound; }
 
 knapsack knapsack::neighbor(int i, int j) const {
-	knapsack k(this);
+	knapsack k(*this);
 
 	if (isSelected(i)) {
 		k.deselect(i);
@@ -287,7 +288,7 @@ knapsack knapsack::bestNeighbor() const {
 		for (int j = 0; j < getNumObjects(); ++j) {
 			if (i >= j) continue;
 			knapsack cur = neighbor(i, j);
-			if (cur.getValue() > getValue()) {
+			if (cur.getValue() > getValue() && cur.isLegal()) {
 				best = cur;
 			}
 		}
