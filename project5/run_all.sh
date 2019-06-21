@@ -23,9 +23,20 @@ make
 N=4
 open_sem $N
 for inf in knapsack/*.input; do
-	outf=${inf/input/output}
-	run_with_lock echo "./p5 $inf > $outf"; ./p4 $inf > $outf
+	outf=${inf/.input/-steep.output}
+	run_with_lock echo "./p5a steep $inf > $outf"; ./p5a steep $inf > $outf
 done
-
+for inf in knapsack/*.input; do
+	outf=${inf/.input/-tabu.output}
+	run_with_lock echo "./p5a tabu $inf > $outf"; ./p5a tabu $inf > $outf
+done
+for inf in color/*.input; do
+	outf=${inf/.input/-steep.output}
+	run_with_lock echo "./p5b steep $inf > $outf"; ./p5b steep $inf > $outf
+done
+for inf in color/*.input; do
+	outf=${inf/.input/-tabu.output}
+	run_with_lock echo "./p5b tabu $inf > $outf"; ./p5b tabu $inf > $outf
+done
 wait
 make clean

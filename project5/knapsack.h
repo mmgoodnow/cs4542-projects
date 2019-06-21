@@ -8,6 +8,9 @@ class knapsack {
 	knapsack(const knapsack &);
 	knapsack(const knapsack &, int);
 	knapsack();
+	void operator=(const knapsack &k);
+	bool operator!=(const knapsack &other);
+	bool operator==(const knapsack &other);
 	int getCost(int) const;
 	int getValue(int) const;
 	int getCost() const;
@@ -24,6 +27,7 @@ class knapsack {
 	float getBound() const;
 	knapsack neighbor(int, int) const;
 	knapsack bestNeighbor() const;
+	knapsack bestNeighborTabu(deque<knapsack>) const;
 
   private:
 	int numDecided;
@@ -135,11 +139,49 @@ knapsack::knapsack(const knapsack &k, int numDecided) {
 }
 
 // default constructor
-knapsack::knapsack() {}
-bool knapsack::operator==(const knapsack& other){
-	return (selected == other.selected);}
-bool knapsack::operator!=(const knapsack& other){
-	return selected != other.selected;}
+knapsack::knapsack() {
+	value.resize(0);
+	cost.resize(0);
+	selected.resize(0);
+	
+	numObjects = 0;
+	costLimit = 0;
+	numDecided = 0;
+
+	totalCost = 0;
+	totalValue = 0;
+	bound = 0;
+}
+
+void knapsack::operator=(const knapsack &k) {
+	
+	int n = k.getNumObjects();
+
+	value.resize(n);
+	cost.resize(n);
+	selected.resize(n);
+	numObjects = k.getNumObjects();
+	costLimit = k.getCostLimit();
+	numDecided = k.getNumDecided();
+
+	for (int i = 0; i < n; i++) {
+		value[i] = k.getValue(i);
+		cost[i] = k.getCost(i);
+		if (k.isSelected(i))
+			select(i);
+		else
+			deselect(i);
+	}
+
+	bound = calcBound();
+}
+
+bool knapsack::operator==(const knapsack &other) {
+	return selected == other.selected;
+}
+bool knapsack::operator!=(const knapsack &other) {
+	return selected != other.selected;
+}
 int knapsack::getNumObjects() const { return numObjects; }
 
 int knapsack::getCostLimit() const { return costLimit; }
@@ -291,22 +333,26 @@ knapsack knapsack::bestNeighbor() const {
 		for (int j = 0; j < getNumObjects(); ++j) {
 			if (i >= j) continue;
 			knapsack cur = neighbor(i, j);
-			if (cur.getValue() > getValue() && cur.isLegal()) {
+			if (cur.getValue() > best.getValue() && cur.isLegal()) {
 				best = cur;
 			}
 		}
 	}
 	return best;
 }
-knapsack knapsack::bestNeighborTabu(deque <knapsack> tabul) const {
-	knapsack best;
+knapsack knapsack::bestNeighborTabu(deque<knapsack> tabul) const {
+	knapsack best(*this);
 	for (int i = 0; i < getNumObjects(); ++i) {
 		for (int j = 0; j < getNumObjects(); ++j) {
 			if (i >= j) continue;
+			
 			knapsack cur = neighbor(i, j);
-			if(find(tabul.begin(), tabul.end(), cur != tabul.end) continue;
-			if (cur.getValue() > getValue() && cur.isLegal()) {
-				best = cur;
+
+			// rule out tabu neighbors
+			if (find(tabul.begin(), tabul.end(), cur) != tabul.end()) continue;
+			
+			if (cur.getValue() > best.getValue() && cur.isLegal()) {
+				best = cur;				
 			}
 		}
 	}

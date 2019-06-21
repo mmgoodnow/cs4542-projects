@@ -161,7 +161,7 @@ Graph bestNonTabuNeighbor(Graph &g, int numColors, tabu_list tabus) {
 void steepestDescent(Graph &g, int numColors, int secs) {
 	clock_t startTime = clock();
 
-	while (true) {6
+	while (true) {
 		Graph candidate = bestNeighbor(g, numColors);
 		int c_conflicts = numConflicts(candidate);
 		int g_conflicts = numConflicts(g);
@@ -178,7 +178,7 @@ void steepestDescent(Graph &g, int numColors, int secs) {
 
 void tabuSearch(Graph &g, int numColors, int secs) {
 	clock_t startTime = clock();
-	Graph champion;
+	Graph champion = g;
 	tabu_list tabus;
 	
 	while (true) {
@@ -191,8 +191,9 @@ void tabuSearch(Graph &g, int numColors, int secs) {
 		}
 		
 		// keep champion updated
-		if (numConflicts(candidate) < numConflicts(champ)) {
-			champ = candidate;
+		if (numConflicts(candidate) < numConflicts(champion)) {
+			cout << numConflicts(champion) << " " << numConflicts(candidate) << endl;
+			champion = candidate;
 		}
 		
 		g = candidate;
@@ -216,11 +217,11 @@ void printSolution(Graph &g) {
 
 int main(int argc, char *argv[]) {
 	ifstream fin;
-	if (argc != 2) {
-		cerr << "Usage:\n\t./p5b input_file" << endl;
+	if (argc != 3) {
+		cerr << "Usage:\n\t./p5b {steep, tabu} input_file" << endl;
 		exit(1);
 	}
-	fin.open(argv[1]);
+	fin.open(argv[2]);
 	if (!fin) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
@@ -236,7 +237,21 @@ int main(int argc, char *argv[]) {
 	cout << "Num edges: " << num_edges(g) << endl;
 	cout << endl;
 
-	steepestDescent(g, numColors);
+
+	if (!strcmp(argv[1], "steep")) {
+		steepestDescent(g, numColors, 300);
+	} else if (!strcmp(argv[1], "tabu")) {
+		tabuSearch(g, numColors, 300);
+	} else if (!strcmp(argv[1], "greedy,steep")) {
+		greedyColoring(g, numColors);
+		tabuSearch(g, numColors, 300);
+	} else if (!strcmp(argv[1], "greedy,tabu")) {
+		greedyColoring(g, numColors);
+		tabuSearch(g, numColors, 300);
+	} else {
+		cerr << "Usage:\n\t./p5b {steep, tabu} input_file" << endl;
+		exit(1);
+	}
 
 	printSolution(g);
 

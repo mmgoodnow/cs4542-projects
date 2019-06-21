@@ -35,56 +35,60 @@ void greedy_knapsack(knapsack &k) {
 		}
 	}
 }
-//Solve the knapsack problem using steepest decent
+// Solve the knapsack problem using steepest decent
 void steepest_descent(knapsack &k, int secs) {
 	clock_t startTime = clock();
-	while(1){
+	while (1) {
 		knapsack candidate = k.bestNeighbor();
-		if(k.getValue() < candidate.getValue()){
+		if (k.getValue() < candidate.getValue()) {
 			k = candidate;
 			// terminate if it's been running too long
 			if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
-		}
-		else {
+		} else {
 			break;
 		}
 	}
 }
 void tabu_search(knapsack &k, int secs) {
 	clock_t startTime = clock();
-	deque <knapsack> tabul;
-	knapsack champion
-	while(1){
-		//find a candidate not on the list
+	deque<knapsack> tabul;
+	knapsack champion(k);
+	while (true) {
+		
+		// find a candidate not on the list
 		knapsack candidate = k.bestNeighborTabu(tabul);
-		//add to taboo list
+		
+		// add to tabu list
 		tabul.push_front(candidate);
-		//remove the oldest item on the list if the list is size greater than 10
-		if(tabul.size() > 10){tabul.pop_back();}
-		//assign new best neighbor
-			k = candidate;
-		if(k.getValue() > champion.getValue();){
-		//assign new champion
+		
+		// remove the oldest item on the list if the list is size > 10
+		if (tabul.size() > 10) {
+			tabul.pop_back();
+		}
+		
+		// assign new best neighbor
+		k = candidate;
+		
+		if (k.getValue() > champion.getValue()) {
+			// assign new champion
+			cout << champion.getValue() << " " << k.getValue() << endl;
 			champion = k;
 		}
-			// terminate if it's been running too long
-			if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
-		}
-		k=champion;
-}
-	
 		
-
+		// terminate if it's been running too long
+		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
+	}
+	k = champion;
+}
 
 int main(int argc, char *argv[]) {
 	char x;
-	int secs = 0;
 	ifstream fin;
-	if (argc != 2) {
-		cerr << "Usage:\n\t./p4 input_file" << endl;
+	if (argc != 3) {
+		cerr << "Usage:\n\t./p5b {steep, tabu} input_file" << endl;
 		exit(1);
 	}
-	fin.open(argv[1]);
+	fin.open(argv[2]);
 	if (!fin) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
@@ -92,11 +96,22 @@ int main(int argc, char *argv[]) {
 
 	knapsack k(fin);
 	cout << "Done reading knapsack instance" << endl;
-	cout << "Please input time constraint:"<<endl;
-	cin >>secs>>endl;
 	
-	steepest_descent(k,secs);
-	
+	if (!strcmp(argv[1], "steep")) {
+		steepest_descent(k, 300);
+	} else if (!strcmp(argv[1], "tabu")) {
+		tabu_search(k, 300);
+	} else if (!strcmp(argv[1], "greedy,steep")) {
+		greedy_knapsack(k);
+		steepest_descent(k, 300);
+	} else if (!strcmp(argv[1], "greedy,tabu")) {
+		greedy_knapsack(k);
+		tabu_search(k, 300);
+	} else {
+		cerr << "Usage:\n\t./p5b {steep, tabu} input_file" << endl;
+		exit(1);
+	}
+
 	cout << endl << "Best solution" << endl;
 	k.printSolution();
 
