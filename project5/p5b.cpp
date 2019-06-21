@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <climits>
 #include <ctime>
+#include <deque>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -26,6 +27,8 @@ typedef Graph::edge_iterator e_itr;
 typedef Graph::adjacency_iterator a_itr;
 typedef Graph::edge_descriptor e_dsc;
 typedef Graph::vertex_descriptor v_dsc;
+
+typedef deque<vector<int>> tabu_list;
 
 // only using color
 struct VertexProperties {
@@ -102,6 +105,16 @@ int numConflicts(Graph &g) {
 	return conflicts;
 }
 
+vector<int> tabuListEntry(Graph &g) {
+	vector<int> vec;
+	pair<v_itr, v_itr> range = vertices(g);
+	for (v_itr i = range.first; i != range.second; i++) {
+		v_dsc node = *i;
+		vec.push_back(g[node].color);
+	}
+	return vec;
+}
+
 Graph neighbor(Graph &g, v_dsc node, int color) {
 	Graph n(g);
 	n[node].color = color;
@@ -123,18 +136,71 @@ Graph bestNeighbor(Graph &g, int numColors) {
 	return best;
 }
 
-void steepestDescent(Graph &g, int numColors) {
-	while (true) {
+Graph bestNonTabuNeighbor(Graph &g, int numColors, tabu_list tabus) {
+	Graph best(g);
+	pair<v_itr, v_itr> range = vertices(g);
+	for (v_itr i = range.first; i != range.second; i++) {
+		v_dsc node = *i;
+		for (int color = 0; color < numColors; color++) {
+			Graph n = neighbor(g, node, color);
+			vector<int> entry = tabuListEntry(n);
+
+			// if the entry is in the tabu list, skip
+			if (find(tabus.begin(), tabus.end(), entry) != tabus.end()) {
+				continue;
+			}
+
+			if (numConflicts(n) < numConflicts(g)) {
+				best = n;
+			}
+		}
+	}
+	return best;
+}
+
+void steepestDescent(Graph &g, int numColors, int secs) {
+	clock_t startTime = clock();
+
+	while (true) {6
 		Graph candidate = bestNeighbor(g, numColors);
 		int c_conflicts = numConflicts(candidate);
 		int g_conflicts = numConflicts(g);
 		if (c_conflicts < g_conflicts) {
 			g = candidate;
 			cout << g_conflicts << " > " << c_conflicts << endl;
-		} else {
+		} else
 			break;
-		}
+
+		// terminate if it's been running too long
+		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
 	}
+}
+
+void tabuSearch(Graph &g, int numColors, int secs) {
+	clock_t startTime = clock();
+	Graph champion;
+	tabu_list tabus;
+	
+	while (true) {
+		Graph candidate = bestNonTabuNeighbor(g, numColors, tabus);
+		
+		// keep tabu list updated
+		tabus.push_front(tabuListEntry(candidate));
+		if (tabus.size() > 10) {
+			tabus.pop_back();
+		}
+		
+		// keep champion updated
+		if (numConflicts(candidate) < numConflicts(champ)) {
+			champ = candidate;
+		}
+		
+		g = candidate;
+		
+		// terminate if it's been running too long
+		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
+	}
+	g = champion;
 }
 
 // print the number of conflicts and the coloring configuration
@@ -169,7 +235,7 @@ int main(int argc, char *argv[]) {
 	cout << "Num nodes: " << num_vertices(g) << endl;
 	cout << "Num edges: " << num_edges(g) << endl;
 	cout << endl;
-	
+
 	steepestDescent(g, numColors);
 
 	printSolution(g);
