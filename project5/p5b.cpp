@@ -1,4 +1,4 @@
-// Project 5b: Solving graph coloring using a greedy algorithm
+// Project 5b: Solving graph coloring using local search
 // Michael Goodnow, Zackary Mackay
 
 #include <algorithm>

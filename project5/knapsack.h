@@ -22,6 +22,7 @@ class knapsack {
 	void deselect(int);
 	bool isSelected(int) const;
 	float getBound() const;
+	knapsack neighbor(int, int);
 
   private:
 	int numDecided;
@@ -47,7 +48,9 @@ struct compare_knapsack_objects {
 // Comparator that will take a pair of knapsacks and compare their bounds.
 // Returns true if the first bound is bigger than the second bound.
 struct compare_bound {
-	bool operator()(knapsack &a, knapsack &b) { return a.getBound() > b.getBound(); }
+	bool operator()(knapsack &a, knapsack &b) {
+		return a.getBound() > b.getBound();
+	}
 };
 
 // Construct a new knapsack instance using the data in fin.
@@ -99,7 +102,7 @@ knapsack::knapsack(const knapsack &k) {
 		else
 			deselect(i);
 	}
-	
+
 	bound = calcBound();
 }
 
@@ -192,7 +195,6 @@ void knapsack::printSolution() {
 	cout << "Total value: " << getValue() << endl;
 	cout << "Total cost: " << getCost() << endl << endl;
 
-
 	// Print out objects in the solution
 	for (int i = 0; i < getNumObjects(); i++)
 		if (isSelected(i))
@@ -260,6 +262,35 @@ float knapsack::calcBound() const {
 	return (float)totalValue;
 }
 
-float knapsack::getBound() const {
-	return bound;
+float knapsack::getBound() const { return bound; }
+
+knapsack knapsack::neighbor(int i, int j) const {
+	knapsack k(this);
+
+	if (isSelected(i)) {
+		k.deselect(i);
+	} else {
+		k.select(i);
+	}
+
+	if (isSelected(j)) {
+		k.deselect(j);
+	} else {
+		k.select(j);
+	}
+	return k;
+}
+
+knapsack knapsack::bestNeighbor() const {
+	knapsack best;
+	for (int i = 0; i < getNumObjects(); ++i) {
+		for (int j = 0; j < getNumObjects(); ++j) {
+			if (i >= j) continue;
+			knapsack cur = neighbor(i, j);
+			if (cur.getValue() > getValue()) {
+				best = cur;
+			}
+		}
+	}
+	return best;
 }

@@ -1,4 +1,4 @@
-// Project 5a: solving knapsack problem using a branch-and-bound solver
+// Project 5a: solving knapsack problem using local search
 // Michael Goodnow
 
 #include <cmath>
@@ -36,6 +36,8 @@ void greedy_knapsack(knapsack &k) {
 	}
 }
 
+
+
 int main(int argc, char *argv[]) {
 	char x;
 	ifstream fin;
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]) {
 	knapsack k(fin);
 	cout << "Done reading knapsack instance" << endl;
 
-	branch_bound(k, 600);
+
 
 	cout << endl << "Best solution" << endl;
 	k.printSolution();
