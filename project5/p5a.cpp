@@ -35,7 +35,7 @@ void greedy_knapsack(knapsack &k) {
 		}
 	}
 }
-//Solve the knapsack problem using local search
+//Solve the knapsack problem using steepest decent
 void steepest_descent(knapsack &k, int secs) {
 	clock_t startTime = clock();
 	while(1){
