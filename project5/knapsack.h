@@ -136,7 +136,10 @@ knapsack::knapsack(const knapsack &k, int numDecided) {
 
 // default constructor
 knapsack::knapsack() {}
-
+bool knapsack::operator==(const knapsack& other){
+	return (selected == other.selected);}
+bool knapsack::operator!=(const knapsack& other){
+	return selected != other.selected;}
 int knapsack::getNumObjects() const { return numObjects; }
 
 int knapsack::getCostLimit() const { return costLimit; }
@@ -288,6 +291,20 @@ knapsack knapsack::bestNeighbor() const {
 		for (int j = 0; j < getNumObjects(); ++j) {
 			if (i >= j) continue;
 			knapsack cur = neighbor(i, j);
+			if (cur.getValue() > getValue() && cur.isLegal()) {
+				best = cur;
+			}
+		}
+	}
+	return best;
+}
+knapsack knapsack::bestNeighborTabu(deque <knapsack> tabul) const {
+	knapsack best;
+	for (int i = 0; i < getNumObjects(); ++i) {
+		for (int j = 0; j < getNumObjects(); ++j) {
+			if (i >= j) continue;
+			knapsack cur = neighbor(i, j);
+			if(find(tabul.begin(), tabul.end(), cur != tabul.end) continue;
 			if (cur.getValue() > getValue() && cur.isLegal()) {
 				best = cur;
 			}
