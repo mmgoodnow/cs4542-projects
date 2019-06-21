@@ -102,6 +102,41 @@ int numConflicts(Graph &g) {
 	return conflicts;
 }
 
+Graph neighbor(Graph &g, v_dsc node, int color) {
+	Graph n(g);
+	n[node].color = color;
+	return n;
+}
+
+Graph bestNeighbor(Graph &g, int numColors) {
+	Graph best(g);
+	pair<v_itr, v_itr> range = vertices(g);
+	for (v_itr i = range.first; i != range.second; i++) {
+		v_dsc node = *i;
+		for (int color = 0; color < numColors; color++) {
+			Graph n = neighbor(g, node, color);
+			if (numConflicts(n) < numConflicts(g)) {
+				best = n;
+			}
+		}
+	}
+	return best;
+}
+
+void steepestDescent(Graph &g, int numColors) {
+	while (true) {
+		Graph candidate = bestNeighbor(g, numColors);
+		int c_conflicts = numConflicts(candidate);
+		int g_conflicts = numConflicts(g);
+		if (c_conflicts < g_conflicts) {
+			g = candidate;
+			cout << g_conflicts << " > " << c_conflicts << endl;
+		} else {
+			break;
+		}
+	}
+}
+
 // print the number of conflicts and the coloring configuration
 void printSolution(Graph &g) {
 	cout << "------------------------------------------------" << endl;
@@ -134,8 +169,8 @@ int main(int argc, char *argv[]) {
 	cout << "Num nodes: " << num_vertices(g) << endl;
 	cout << "Num edges: " << num_edges(g) << endl;
 	cout << endl;
-
-	greedyColoring(g, numColors);
+	
+	steepestDescent(g, numColors);
 
 	printSolution(g);
 
