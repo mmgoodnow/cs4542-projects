@@ -35,7 +35,8 @@ void greedy_knapsack(knapsack &k) {
 		}
 	}
 }
-// Solve the knapsack problem using steepest decent
+
+// Repeatedly switch to best neighbor until we reach a local optimum.
 void steepest_descent(knapsack &k, int secs) {
 	clock_t startTime = clock();
 	while (1) {
@@ -49,31 +50,34 @@ void steepest_descent(knapsack &k, int secs) {
 		}
 	}
 }
+
+// repeatedly find the best neighbor not in tabu list, and switch to that
+// neighbor. Keep track of champion, return it when we reach the time limit.
 void tabu_search(knapsack &k, int secs) {
 	clock_t startTime = clock();
 	deque<knapsack> tabul;
 	knapsack champion(k);
 	while (true) {
-		
+
 		// find a candidate not on the list
 		knapsack candidate = k.bestNeighborTabu(tabul);
-		
+
 		// add to tabu list
 		tabul.push_front(candidate);
-		
+
 		// remove the oldest item on the list if the list is size > 10
 		if (tabul.size() > 10) {
 			tabul.pop_back();
 		}
-		
+
 		// assign new best neighbor
 		k = candidate;
-		
+
 		if (k.getValue() > champion.getValue()) {
 			// assign new champion
 			champion = k;
 		}
-		
+
 		// terminate if it's been running too long
 		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
 	}
@@ -92,12 +96,12 @@ int main(int argc, char *argv[]) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
-	
+
 	cerr << argv[0] << " " << argv[1] << " " << argv[2] << endl;
 
 	knapsack k(fin);
 	cerr << "Done reading knapsack instance" << endl;
-	
+
 	if (!strcmp(argv[1], "steep")) {
 		steepest_descent(k, 300);
 	} else if (!strcmp(argv[1], "tabu")) {

@@ -143,7 +143,7 @@ knapsack::knapsack() {
 	value.resize(0);
 	cost.resize(0);
 	selected.resize(0);
-	
+
 	numObjects = 0;
 	costLimit = 0;
 	numDecided = 0;
@@ -153,8 +153,9 @@ knapsack::knapsack() {
 	bound = 0;
 }
 
+// assignment overload
 void knapsack::operator=(const knapsack &k) {
-	
+
 	int n = k.getNumObjects();
 
 	value.resize(n);
@@ -176,12 +177,16 @@ void knapsack::operator=(const knapsack &k) {
 	bound = calcBound();
 }
 
+// overload for ==
 bool knapsack::operator==(const knapsack &other) {
 	return selected == other.selected;
 }
+
+// overload for !=
 bool knapsack::operator!=(const knapsack &other) {
 	return selected != other.selected;
 }
+
 int knapsack::getNumObjects() const { return numObjects; }
 
 int knapsack::getCostLimit() const { return costLimit; }
@@ -310,6 +315,7 @@ float knapsack::calcBound() const {
 
 float knapsack::getBound() const { return bound; }
 
+// create neighbor by toggling selected[i] and selected[j].
 knapsack knapsack::neighbor(int i, int j) const {
 	knapsack k(*this);
 
@@ -327,6 +333,7 @@ knapsack knapsack::neighbor(int i, int j) const {
 	return k;
 }
 
+// find best neighbor
 knapsack knapsack::bestNeighbor() const {
 	knapsack best;
 	for (int i = 0; i < getNumObjects(); ++i) {
@@ -340,19 +347,21 @@ knapsack knapsack::bestNeighbor() const {
 	}
 	return best;
 }
+
+// find best neighbor not in tabu list
 knapsack knapsack::bestNeighborTabu(deque<knapsack> tabul) const {
 	knapsack best(*this);
 	for (int i = 0; i < getNumObjects(); ++i) {
 		for (int j = 0; j < getNumObjects(); ++j) {
 			if (i >= j) continue;
-			
+
 			knapsack cur = neighbor(i, j);
 
 			// rule out tabu neighbors
 			if (find(tabul.begin(), tabul.end(), cur) != tabul.end()) continue;
-			
+
 			if (cur.getValue() > best.getValue() && cur.isLegal()) {
-				best = cur;				
+				best = cur;
 			}
 		}
 	}

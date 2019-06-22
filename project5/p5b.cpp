@@ -107,6 +107,8 @@ int numConflicts(Graph &g) {
 	return conflicts;
 }
 
+// tabu list entries are represented as a mapping of node number to color
+// to simplify comparisons
 vector<int> tabuListEntry(Graph &g) {
 	vector<int> vec;
 	pair<v_itr, v_itr> range = vertices(g);
@@ -117,12 +119,15 @@ vector<int> tabuListEntry(Graph &g) {
 	return vec;
 }
 
+// Get the neighbor of this graph specified by changing node to the specified
+// color.
 Graph neighbor(Graph &g, v_dsc node, int color) {
 	Graph n(g);
 	n[node].color = color;
 	return n;
 }
 
+// find the best neighbor of this current graph coloring.
 Graph bestNeighbor(Graph &g, int numColors) {
 	Graph best(g);
 	pair<v_itr, v_itr> range = vertices(g);
@@ -138,6 +143,7 @@ Graph bestNeighbor(Graph &g, int numColors) {
 	return best;
 }
 
+// find the best neighbor that isn't in the tabu list.
 Graph bestNonTabuNeighbor(Graph &g, int numColors, tabu_list tabus) {
 	Graph best(g);
 	pair<v_itr, v_itr> range = vertices(g);
@@ -160,6 +166,7 @@ Graph bestNonTabuNeighbor(Graph &g, int numColors, tabu_list tabus) {
 	return best;
 }
 
+// repeatedly find the best neighbor until we reach a local optimum
 void steepestDescent(Graph &g, int numColors, int secs) {
 	clock_t startTime = clock();
 
@@ -177,27 +184,29 @@ void steepestDescent(Graph &g, int numColors, int secs) {
 	}
 }
 
+// repeatedly find the best neighbor not in tabu list, and switch to that
+// neighbor. Keep track of champion, return it when we reach the time limit.
 void tabuSearch(Graph &g, int numColors, int secs) {
 	clock_t startTime = clock();
 	Graph champion = g;
 	tabu_list tabus;
-	
+
 	while (true) {
 		Graph candidate = bestNonTabuNeighbor(g, numColors, tabus);
-		
+
 		// keep tabu list updated
 		tabus.push_front(tabuListEntry(candidate));
 		if (tabus.size() > 10) {
 			tabus.pop_back();
 		}
-		
+
 		// keep champion updated
 		if (numConflicts(candidate) < numConflicts(champion)) {
 			champion = candidate;
 		}
-		
+
 		g = candidate;
-		
+
 		// terminate if it's been running too long
 		if ((clock() - startTime) / CLOCKS_PER_SEC >= secs) break;
 	}
@@ -226,7 +235,7 @@ int main(int argc, char *argv[]) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
-	
+
 	cerr << argv[0] << " " << argv[1] << " " << argv[2] << endl;
 
 	Graph g;
@@ -238,7 +247,6 @@ int main(int argc, char *argv[]) {
 	cout << "Num nodes: " << num_vertices(g) << endl;
 	cout << "Num edges: " << num_edges(g) << endl;
 	cout << endl;
-
 
 	if (!strcmp(argv[1], "steep")) {
 		steepestDescent(g, numColors, 300);
