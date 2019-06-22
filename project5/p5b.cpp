@@ -50,6 +50,8 @@ void initializeGraph(Graph &g, ifstream &fin) {
 	// Add nodes.
 	for (int i = 0; i < n; i++) {
 		v = add_vertex(g);
+		g[v].color = 0;
+		g[v].visited = false;
 	}
 
 	for (int i = 0; i < e; i++) {
