@@ -71,7 +71,6 @@ void tabu_search(knapsack &k, int secs) {
 		
 		if (k.getValue() > champion.getValue()) {
 			// assign new champion
-			cout << champion.getValue() << " " << k.getValue() << endl;
 			champion = k;
 		}
 		
@@ -93,9 +92,11 @@ int main(int argc, char *argv[]) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
+	
+	cerr << argv[0] << " " << argv[1] << " " << argv[2] << endl;
 
 	knapsack k(fin);
-	cout << "Done reading knapsack instance" << endl;
+	cerr << "Done reading knapsack instance" << endl;
 	
 	if (!strcmp(argv[1], "steep")) {
 		steepest_descent(k, 300);

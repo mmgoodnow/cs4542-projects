@@ -167,7 +167,6 @@ void steepestDescent(Graph &g, int numColors, int secs) {
 		int g_conflicts = numConflicts(g);
 		if (c_conflicts < g_conflicts) {
 			g = candidate;
-			cout << g_conflicts << " > " << c_conflicts << endl;
 		} else
 			break;
 
@@ -192,7 +191,6 @@ void tabuSearch(Graph &g, int numColors, int secs) {
 		
 		// keep champion updated
 		if (numConflicts(candidate) < numConflicts(champion)) {
-			cout << numConflicts(champion) << " " << numConflicts(candidate) << endl;
 			champion = candidate;
 		}
 		
@@ -226,6 +224,8 @@ int main(int argc, char *argv[]) {
 		cerr << "Cannot open " << argv[1] << endl;
 		exit(1);
 	}
+	
+	cerr << argv[0] << " " << argv[1] << " " << argv[2] << endl;
 
 	Graph g;
 	int numColors;
